@@ -1,12 +1,4 @@
 import Course from "./components/Course.jsx";
-import Part from "./components/Part.jsx";
-/*
-
-const Total = ({ sum }) => <p>Number of exercises {sum}</p>
-
-
-
-*/
 
 const App = () => {
     const courses = [

@@ -1,4 +1,8 @@
 import {useState} from 'react';
+import Filter from "./components/Filter.jsx";
+import SearchResult from "./components/SearchResult.jsx";
+import PersonForm from "./components/PersonForm.jsx";
+import Persons from "./components/Persons.jsx";
 
 const App = () => {
     const [persons, setPersons] = useState([]);
@@ -8,18 +12,7 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('');
 
 
-    const addPerson = (event) => {
-        event.preventDefault();
 
-        if (persons.some(person => person.name === newName)) {
-            alert(`${newName} is already added to phonebook`);
-        } else {
-            const nameObj = {name: newName, number: newNumber};
-            setPersons(persons.concat(nameObj));
-            setNewName('');
-            setNewNumber('');
-        }
-    };
 
     const handleNameChange = (event) => {
         console.log(event.target.value);
@@ -37,6 +30,18 @@ const App = () => {
         searchNames(event.target.value);
     };
 
+    const addPerson = (event) => {
+        event.preventDefault();
+
+        if (persons.some(person => person.name === newName)) {
+            alert(`${newName} is already added to phonebook`);
+        } else {
+            const nameObj = { name: newName, number: newNumber };
+            setPersons(persons.concat(nameObj));
+            setNewName('');
+            setNewNumber('');
+        }
+    };
     const searchNames = (name) => {
         const lowercaseSearchName = name.toLowerCase();
         setSearches(
@@ -50,40 +55,16 @@ const App = () => {
             <div>
                 <h1>Phonebook</h1>
 
-                <div>
-                    Search Name: <input value={searchName} onChange={handleSearchChange}/>
-                </div>
+                <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
 
                 <h3>Search results:</h3>
-                {searches.length === 0 ? (
-                    <p>No matches found.</p>
-                ) : (
-                    searches.map(search => (
-                        <div key={search.name}>
-                            {search.name} {search.number}
-                        </div>
-                    ))
-                )}
+                <SearchResult searches={searches}/>
 
                 <h2>Add New</h2>
-                <form onSubmit={addPerson}>
-                    <div>
-                        Name: <input value={newName} onChange={handleNameChange}/>
-                    </div>
-                    <div>
-                        Number: <input value={newNumber} onChange={handleNumberChange}/>
-                    </div>
-                    <div>
-                        <button type="submit">Add</button>
-                    </div>
-                </form>
+                <PersonForm onClick={addPerson} name={newName} number={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
 
                 <h2>All Numbers</h2>
-                {persons.map(person =>
-                    <div key={person.name}>
-                        {person.name} {person.number}
-                    </div>
-                )}
+               <Persons persons={persons}/>
             </div>
         );
     };
