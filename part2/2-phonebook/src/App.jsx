@@ -1,4 +1,5 @@
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Filter from "./components/Filter.jsx";
 import SearchResult from "./components/SearchResult.jsx";
 import PersonForm from "./components/PersonForm.jsx";
@@ -11,7 +12,13 @@ const App = () => {
     const [newName, setNewName] = useState('');
     const [newNumber, setNewNumber] = useState('');
 
-
+    useEffect(() => {
+        axios
+            .get('http://localhost:3001/persons')
+            .then(response => {
+                setPersons(response.data)
+            })
+    }, [])
 
 
     const handleNameChange = (event) => {
@@ -46,7 +53,7 @@ const App = () => {
         const lowercaseSearchName = name.toLowerCase();
         setSearches(
             persons.filter(person =>
-                person.name.toLowerCase().startsWith(lowercaseSearchName)
+                lowercaseSearchName.length > 0 && person.name.toLowerCase().startsWith(lowercaseSearchName)
             )
         );
     };
