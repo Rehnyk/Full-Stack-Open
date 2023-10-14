@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import axios from 'axios';
 import Filter from "./components/Filter.jsx";
 import SearchResult from "./components/SearchResult.jsx";
@@ -42,10 +42,23 @@ const App = () => {
         event.preventDefault();
 
         if (persons.some(person => person.name === newName)) {
+            window.confirm( )
+
             alert(`${newName} is already added to phonebook`);
+            personService
+                .update(id, changedNote)
+                .then(returnedNote => {
+                    setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+                })
+                .catch(error => {
+                    alert(
+                        `the note '${note.content}' was already deleted from server`
+                    )
+                    setNotes(notes.filter(n => n.id !== id))
+                })
         } else {
             personService
-                .create({ name: newName, number: newNumber })
+                .create({name: newName, number: newNumber})
                 .then(returnedPerson => {
                     setPersons(persons.concat(returnedPerson));
                     setNewName('');
@@ -62,22 +75,27 @@ const App = () => {
         );
     };
 
-        return (
-            <div>
-                <h1>Phonebook</h1>
+    const deletePerson = () => {
 
-                <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
-
-                <h3>Search results:</h3>
-                <SearchResult searches={searches}/>
-
-                <h2>Add New</h2>
-                <PersonForm onClick={addPerson} name={newName} number={newNumber} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
-
-                <h2>All Numbers</h2>
-               <Persons persons={persons}/>
-            </div>
-        );
     };
 
-    export default App;
+    return (
+        <div>
+            <h1>Phonebook</h1>
+
+            <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
+
+            <h3>Search results:</h3>
+            <SearchResult searches={searches} onClick{deletePerson}/>
+
+            <h2>Add New</h2>
+            <PersonForm onClick={addPerson} name={newName} number={newNumber} handleNameChange={handleNameChange}
+                        handleNumberChange={handleNumberChange}/>
+
+            <h2>All Numbers</h2>
+            <Persons persons={persons} onClick{deletePerson}/>
+        </div>
+    );
+};
+
+export default App;
