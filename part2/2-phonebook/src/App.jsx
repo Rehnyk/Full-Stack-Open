@@ -4,6 +4,7 @@ import Filter from "./components/Filter.jsx";
 import SearchResult from "./components/SearchResult.jsx";
 import PersonForm from "./components/PersonForm.jsx";
 import Persons from "./components/Persons.jsx";
+import personService from './services/persons.js'
 
 const App = () => {
     const [persons, setPersons] = useState([]);
@@ -13,10 +14,10 @@ const App = () => {
     const [newNumber, setNewNumber] = useState('');
 
     useEffect(() => {
-        axios
-            .get('http://localhost:3001/persons')
-            .then(response => {
-                setPersons(response.data)
+        personService
+            .getAll()
+            .then(initialPersons => {
+                setPersons(initialPersons)
             })
     }, [])
 
@@ -43,10 +44,13 @@ const App = () => {
         if (persons.some(person => person.name === newName)) {
             alert(`${newName} is already added to phonebook`);
         } else {
-            const nameObj = { name: newName, number: newNumber };
-            setPersons(persons.concat(nameObj));
-            setNewName('');
-            setNewNumber('');
+            personService
+                .create({ name: newName, number: newNumber })
+                .then(returnedPerson => {
+                    setPersons(persons.concat(returnedPerson));
+                    setNewName('');
+                    setNewNumber('');
+                })
         }
     };
     const searchNames = (name) => {
