@@ -75,8 +75,18 @@ const App = () => {
         );
     };
 
-    const deletePerson = () => {
+    const deletePerson = (name) => {
+        const findPerson = persons.find(person => person.name === name);
 
+
+        personService
+            .deletePerson(findPerson.id)
+            .then(() =>    {
+                setPersons(persons.filter(person => person.id !== findPerson.id));
+            })
+            .catch(error => {
+                alert('Failed to delete the person. The person might have been deleted from the server.');
+            });
     };
 
     return (
@@ -86,14 +96,14 @@ const App = () => {
             <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
 
             <h3>Search results:</h3>
-            <SearchResult searches={searches} />
+            <SearchResult searches={searches} onClick={(id) => deletePerson(id)}/>
 
             <h2>Add New</h2>
             <PersonForm onClick={addPerson} name={newName} number={newNumber} handleNameChange={handleNameChange}
                         handleNumberChange={handleNumberChange}/>
 
             <h2>All Numbers</h2>
-            <Persons persons={persons} />
+            <Persons persons={persons} onClick={(name) => deletePerson(name)}/>
         </div>
     );
 };
