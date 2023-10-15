@@ -83,6 +83,7 @@ const App = () => {
             .deletePerson(findPerson.id)
             .then(() =>    {
                 setPersons(persons.filter(person => person.id !== findPerson.id));
+                setSearches(searches.filter(person => person.id !== findPerson.id));
             })
             .catch(error => {
                 alert('Failed to delete the person. The person might have been deleted from the server.');
@@ -96,7 +97,7 @@ const App = () => {
             <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
 
             <h3>Search results:</h3>
-            <SearchResult searches={searches} onClick={(id) => deletePerson(id)}/>
+            <SearchResult searches={searches} onClick={(name) => deletePerson(name)}/>
 
             <h2>Add New</h2>
             <PersonForm onClick={addPerson} name={newName} number={newNumber} handleNameChange={handleNameChange}
