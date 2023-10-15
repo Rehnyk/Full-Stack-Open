@@ -40,30 +40,30 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault();
+        const existingPerson = persons.find(person => person.name === newName);
 
-        if (persons.some(person => person.name === newName)) {
-            window.confirm( )
-
-            alert(`${newName} is already added to phonebook`);
-            personService
-                .update(id, changedNote)
-                .then(returnedNote => {
-                    setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-                })
-                .catch(error => {
-                    alert(
-                        `the note '${note.content}' was already deleted from server`
-                    )
-                    setNotes(notes.filter(n => n.id !== id))
-                })
+        if (existingPerson) {
+            if (window.confirm(`${newName} is already added to the phonebook. Do you want to replace the old number with the new one?`)) {
+                personService
+                    .update(existingPerson.id, { ...existingPerson, number: newNumber })
+                    .then(returnedPerson => {
+                        setPersons(persons.map(person => (person.id !== existingPerson.id ? person : returnedPerson)));
+                    })
+                    .catch(error => {
+                        alert('Failed to update the person. The person might have been deleted from the server.');
+                    });
+            }
         } else {
             personService
-                .create({name: newName, number: newNumber})
+                .create({ name: newName, number: newNumber })
                 .then(returnedPerson => {
                     setPersons(persons.concat(returnedPerson));
                     setNewName('');
                     setNewNumber('');
                 })
+                .catch(error => {
+                    alert('Failed to add a new person.');
+                });
         }
     };
     const searchNames = (name) => {
@@ -86,14 +86,14 @@ const App = () => {
             <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
 
             <h3>Search results:</h3>
-            <SearchResult searches={searches} onClick{deletePerson}/>
+            <SearchResult searches={searches} />
 
             <h2>Add New</h2>
             <PersonForm onClick={addPerson} name={newName} number={newNumber} handleNameChange={handleNameChange}
                         handleNumberChange={handleNumberChange}/>
 
             <h2>All Numbers</h2>
-            <Persons persons={persons} onClick{deletePerson}/>
+            <Persons persons={persons} />
         </div>
     );
 };
