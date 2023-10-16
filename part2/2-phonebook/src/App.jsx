@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react';
-import axios from 'axios';
 import Filter from "./components/Filter.jsx";
 import SearchResult from "./components/SearchResult.jsx";
 import PersonForm from "./components/PersonForm.jsx";
 import Persons from "./components/Persons.jsx";
+import Notification from "./components/Notification.jsx";
 import personService from './services/persons.js'
 
 const App = () => {
@@ -12,6 +12,8 @@ const App = () => {
     const [searchName, setSearchName] = useState('');
     const [newName, setNewName] = useState('');
     const [newNumber, setNewNumber] = useState('');
+    const [notification, setNotification] = useState(null)
+
 
     useEffect(() => {
         personService
@@ -40,14 +42,18 @@ const App = () => {
 
     const addPerson = (event) => {
         event.preventDefault();
-        const existingPerson = persons.find(person => person.name === newName);
+        const existingPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase());
 
+        // Change the number
         if (existingPerson) {
             if (window.confirm(`${newName} is already added to the phonebook. Do you want to replace the old number with the new one?`)) {
                 personService
                     .update(existingPerson.id, { ...existingPerson, number: newNumber })
                     .then(returnedPerson => {
                         setPersons(persons.map(person => (person.id !== existingPerson.id ? person : returnedPerson)));
+
+                        setNotification(`Number for ${existingPerson.name} has been changed.`)
+                        setTimeout(() => {setNotification(null)}, 5000)
                     })
                     .catch(error => {
                         alert('Failed to update the person. The person might have been deleted from the server.');
@@ -60,6 +66,10 @@ const App = () => {
                     setPersons(persons.concat(returnedPerson));
                     setNewName('');
                     setNewNumber('');
+
+                    setNotification(`${newName} has been added in the phonebook`)
+                    setTimeout(() => {setNotification(null)}, 5000)
+
                 })
                 .catch(error => {
                     alert('Failed to add a new person.');
@@ -92,8 +102,8 @@ const App = () => {
 
     return (
         <div>
+            <Notification message={notification} />
             <h1>Phonebook</h1>
-
             <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
 
             <h3>Search results:</h3>

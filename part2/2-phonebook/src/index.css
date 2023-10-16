@@ -1,0 +1,14 @@
+
+
+.notification {
+    color: green;
+    background: lightgrey;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 7px;
+}
+
+.notification-container {
+    height: 50px;
+}
