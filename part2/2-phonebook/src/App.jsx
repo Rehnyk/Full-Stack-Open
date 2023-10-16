@@ -4,6 +4,7 @@ import SearchResult from "./components/SearchResult.jsx";
 import PersonForm from "./components/PersonForm.jsx";
 import Persons from "./components/Persons.jsx";
 import Notification from "./components/Notification.jsx";
+import Error from "./components/Error.jsx";
 import personService from './services/persons.js'
 
 const App = () => {
@@ -12,7 +13,8 @@ const App = () => {
     const [searchName, setSearchName] = useState('');
     const [newName, setNewName] = useState('');
     const [newNumber, setNewNumber] = useState('');
-    const [notification, setNotification] = useState(null)
+    const [notification, setNotification] = useState(null);
+    const [error, setError] = useState(null);
 
 
     useEffect(() => {
@@ -56,7 +58,8 @@ const App = () => {
                         setTimeout(() => {setNotification(null)}, 5000)
                     })
                     .catch(error => {
-                        alert('Failed to update the person. The person might have been deleted from the server.');
+                        setError(`Failed to update ${existingPerson.name}. Contact has already been deleted from the server.`)
+                        setTimeout(() => {setError(null)}, 5000);
                     });
             }
         } else {
@@ -72,7 +75,8 @@ const App = () => {
 
                 })
                 .catch(error => {
-                    alert('Failed to add a new person.');
+                    setError(`Failed to add ${newName}.`)
+                    setTimeout(() => {setError(null)}, 5000);
                 });
         }
     };
@@ -94,16 +98,24 @@ const App = () => {
             .then(() =>    {
                 setPersons(persons.filter(person => person.id !== findPerson.id));
                 setSearches(searches.filter(person => person.id !== findPerson.id));
+
+                setNotification(` ${findPerson.name} has been deleted.`)
+                setTimeout(() => {setNotification(null)}, 5000)
+
             })
             .catch(error => {
-                alert('Failed to delete the person. The person might have been deleted from the server.');
+                setError(`Failed to delete ${findPerson.name}. Contact has already been deleted from the server.`)
+                setTimeout(() => {setError(null)}, 5000);
             });
     };
 
     return (
         <div>
-            <Notification message={notification} />
             <h1>Phonebook</h1>
+
+            <Error message={error} />
+            <Notification message={notification} />
+
             <Filter searchName={searchName} handleSearchChange={handleSearchChange}/>
 
             <h3>Search results:</h3>

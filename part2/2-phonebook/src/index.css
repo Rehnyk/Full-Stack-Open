@@ -7,8 +7,16 @@
     border-style: solid;
     border-radius: 5px;
     padding: 7px;
+    margin-bottom: 10px;
 }
 
-.notification-container {
-    height: 50px;
+.error {
+    color: red;
+    background: lightgrey;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 7px;
+    margin-bottom: 10px;
 }
+
