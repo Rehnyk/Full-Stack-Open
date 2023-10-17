@@ -1,3 +1,5 @@
+import Weather from "./Weather.jsx";
+
 const Country = (country) => {
     const languageNames = Object.values(country.languages);
     const renderListIfMultiple = (label, array) => {
@@ -35,6 +37,7 @@ const Country = (country) => {
 
             {renderListIfMultiple('Timezone', country.timezones)}
 
+            <Weather city={country.capital[0]}/>
         </div>
     )
 }

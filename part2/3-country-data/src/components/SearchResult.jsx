@@ -1,3 +1,4 @@
+import Country from "./Country.jsx";
 const SearchResult = ({searches, onClick}) => (
     <div>
         {searches.length === 0 ? (
