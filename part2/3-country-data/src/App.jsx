@@ -1,22 +1,66 @@
 import {useState, useEffect} from 'react';
 import axios from 'axios'
-/*
 
 const SearchResult = ({searches, onClick}) => (
     <div>
-        {searches.length === 0 ? (
-            <p>No matches found.</p>
+        {searches.length > 10 ? (
+            <div>
+                Too many matches, specify another filter.
+            </div>
+        ) : searches.length === 1 ? (
+            <Country {...searches[0]} />
         ) : (
-            searches.map(search => (
-                <div key={search.name}>
-                    {search.name} {search.number}
-                    <button onClick={() => onClick(search.name)} type="submit">delete</button>
+            searches.map(country =>
+                <div key={country.name.common}>
+                    {country.name.common}
+                    <br/>
                 </div>
-            ))
+            )
         )}
     </div>
 );
-*/
+
+
+const Country = (country) => {
+    const languageNames = Object.values(country.languages);
+    const renderListIfMultiple = (label, array) => {
+        if (array.length === 1) {
+            return <p>{label}: {array[0]}</p>;
+        } else if (array.length > 1) {
+            return (
+                <div>
+                    <p>{label}s:</p>
+                    <ul>
+                        {array.map((item, index) => (
+                            <li key={index}>{item}</li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        } else {
+            return null;
+        }
+    };
+    return (
+        <div>
+            <h1>{country.name.common}</h1>
+            <p>Official Name: {country.name.official}</p>
+
+            {renderListIfMultiple('Capital', country.capital)}
+            <p>Area: {country.area} km²</p>
+            <p>Population: {country.population} </p>
+
+            {renderListIfMultiple('Language', languageNames)}
+
+
+            <img src={country.flags.svg} alt={country.flags.alt} className="flag" />
+
+
+            {renderListIfMultiple('Timezone', country.timezones)}
+
+        </div>
+    )
+}
 
 
 const App = () => {
@@ -66,18 +110,8 @@ const App = () => {
                 Find countries: <input value={searchString} onChange={handleSearchChange}/>
             </div>
 
-            {resultCountries.length > 10 ? (
-                <div>
-                    Too many matches, specify another filter.
-                </div>
-            ) : (
-                resultCountries.map(country =>
-                    <div key={country.name.common}>
-                        {country.name.common}
-                        <br/>
-                    </div>
-                )
-            )}
+            <SearchResult searches={resultCountries} />
+
         </div>
     )
 }
