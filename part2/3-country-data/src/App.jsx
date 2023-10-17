@@ -3,7 +3,11 @@ import axios from 'axios'
 
 const SearchResult = ({searches, onClick}) => (
     <div>
-        {searches.length > 10 ? (
+        {searches.length === 0 ? (
+            <div>
+                Query does not match any country.
+            </div>
+        ) : searches.length > 10 ? (
             <div>
                 Too many matches, specify another filter.
             </div>
@@ -13,6 +17,7 @@ const SearchResult = ({searches, onClick}) => (
             searches.map(country =>
                 <div key={country.name.common}>
                     {country.name.common}
+                    <button onClick={() => onClick(country)} type="submit">Show</button>
                     <br/>
                 </div>
             )
@@ -53,7 +58,7 @@ const Country = (country) => {
             {renderListIfMultiple('Language', languageNames)}
 
 
-            <img src={country.flags.svg} alt={country.flags.alt} className="flag" />
+            <img src={country.flags.svg} alt={country.flags.alt} className="flag"/>
 
 
             {renderListIfMultiple('Timezone', country.timezones)}
@@ -68,9 +73,10 @@ const App = () => {
     const [countries, setCountries] = useState([]);
     const [searchString, setSearchString] = useState('');
     const [resultCountries, setResultCountries] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
 
 
-   useEffect(() => {
+    useEffect(() => {
         console.log('effect run')
 
         // skip if country is not defined
@@ -78,30 +84,36 @@ const App = () => {
             console.log('fetching countries ... ')
 
             axios
-                    .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
-                    .then(response => {
-          setCountries(response.data)
-                    })
+                .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
+                .then(response => {
+                    setCountries(response.data)
+                })
         }
     }, []);
 
 
-        const handleSearchChange = (event) => {
-            console.log(event.target.value);
+    const handleSearchChange = (event) => {
+        console.log(event.target.value);
 
-            setSearchString(event.target.value);
-            searchCountry(event.target.value);
-        };
+        setSearchString(event.target.value);
+        searchCountry(event.target.value);
+    };
+
+    const handleShowCountry = (country) => {
+        setSelectedCountry(country);
+        setResultCountries([]);
+    };
 
 
-       const searchCountry = (str) => {
+    const searchCountry = (str) => {
+        setSelectedCountry(null);
 
-           setResultCountries(
-               countries.filter(country =>
-                   country.name.common.toLowerCase().includes(str.toLowerCase()) || country.name.official.toLowerCase().includes(str.toLowerCase())
-               )
-           );
-       };
+        setResultCountries(
+            countries.filter(country =>
+                country.name.common.toLowerCase().includes(str.toLowerCase()) || country.name.official.toLowerCase().includes(str.toLowerCase())
+            )
+        );
+    };
 
 
     return (
@@ -110,8 +122,11 @@ const App = () => {
                 Find countries: <input value={searchString} onChange={handleSearchChange}/>
             </div>
 
-            <SearchResult searches={resultCountries} />
-
+            {selectedCountry ? (
+                <Country {...selectedCountry} />
+            ) : (
+                <SearchResult searches={resultCountries} onClick={handleShowCountry}/>
+            )}
         </div>
     )
 }
