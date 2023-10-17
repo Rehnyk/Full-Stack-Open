@@ -14,9 +14,8 @@ const SearchResult = ({searches, onClick}) => (
         ) : (
             searches.map(country =>
                 <div key={country.name.common}>
-                    {country.name.common}
                     <button onClick={() => onClick(country)} type="submit">Show</button>
-                    <br/>
+                    {country.name.common}
                 </div>
             )
         )}

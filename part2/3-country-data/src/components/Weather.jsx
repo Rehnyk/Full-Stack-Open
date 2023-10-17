@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {useState, useEffect} from 'react';
 
-const Weather = ( {city}) => {
+const Weather = ({city}) => {
     const api_key = import.meta.env.VITE_SOME_KEY;
     const [weatherData, setWeatherData] = useState(null);
 
@@ -10,25 +10,34 @@ const Weather = ( {city}) => {
         axios
             .get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${api_key}`)
             .then(response => {
-                console.log(response.data);
                 setWeatherData(response.data);
-            });
+            })
+            .catch(error => {
+            console.error("Error fetching weather data:", error);
+        });
     }, [city, api_key]);
 
-    return (
-    <div>
-        <h2>Weather in {city}</h2>
+    if (!weatherData) {
+        return <p className="no-data">Weather data not available for {city}</p>;
+    }
 
-        {weatherData && (
+        return (
             <div>
-                <p>Temperature: {(weatherData.main.temp - 273.15).toFixed(2) } °C</p>
-                <p>Wind: {weatherData.wind.speed} m/s</p>
+                <div>
+                    <h2>Weather in {city}</h2>
 
+                    {weatherData && (
+                        <div>
+                            <p>Temperature: {(weatherData.main.temp - 273.15).toFixed(2)} °C</p>
+                            <p>Wind: {weatherData.wind.speed} m/s</p>
+
+                            <img src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+                                 alt={weatherData.weather[0].description}/>
+                        </div>
+                    )}
+                </div>
             </div>
-        )}
-        <p></p>
-    </div>
-)
+        )
 
 }
 

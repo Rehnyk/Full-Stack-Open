@@ -2,3 +2,13 @@
     width: 150px;
     border: 1px solid black;
 }
+
+button {
+    margin: 3px 10px;
+}
+
+.no-data {
+    margin-top: 50px;
+    color: #737373;
+    font-style: italic;
+}

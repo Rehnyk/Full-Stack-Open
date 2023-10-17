@@ -15,22 +15,18 @@ const App = () => {
     useEffect(() => {
         console.log('effect run')
 
-        // skip if country is not defined
-        if (countries) {
-            console.log('fetching countries ... ')
-
-            axios
-                .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
-                .then(response => {
-                    setCountries(response.data)
-                })
-        }
+        axios
+            .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
+            .then(response => {
+                setCountries(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching countries:", error);
+            });
     }, []);
 
 
     const handleSearchChange = (event) => {
-        console.log(event.target.value);
-
         setSearchString(event.target.value);
         searchCountry(event.target.value);
     };
@@ -38,6 +34,7 @@ const App = () => {
     const handleShowCountry = (country) => {
         setSelectedCountry(country);
         setResultCountries([]);
+        setSearchString('');
     };
 
 
