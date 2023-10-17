@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
-//import axios from 'axios';
+import axios from 'axios'
+/*
 
 const SearchResult = ({searches, onClick}) => (
     <div>
@@ -15,90 +16,30 @@ const SearchResult = ({searches, onClick}) => (
         )}
     </div>
 );
+*/
 
 
 const App = () => {
-
-    const countriesArr = [
-        {
-            "name": {
-                "common": "Kuwait",
-                "official": "State of Kuwait",
-                "nativeName": {
-                    "ara": {
-                        "official": "دولة الكويت",
-                        "common": "الكويت"
-                    }
-                }
-            }
-        },
-        {
-            "name": {
-                "common": "Austria",
-                "official": "Republic of Austria",
-                "nativeName": {
-                    "bar": {
-                        "official": "Republik Österreich",
-                        "common": "Österreich"
-                    }
-                }
-            }
-        },
-        {
-            "name": {
-                "common": "Australia",
-                "official": "Australia",
-                "nativeName": {
-                    "bar": {
-                        "official": "Australia",
-                        "common": "Australia"
-                    }
-                }
-            }
-        }, {
-            "name": {
-                "common": "Canada",
-                "official": "Canada",
-                "nativeName": {
-                    "bar": {
-                        "official": "Canada",
-                        "common": "Canada"
-                    }
-                }
-            }
-        }
-    ]
-
 
     const [countries, setCountries] = useState([]);
     const [searchString, setSearchString] = useState('');
     const [resultCountries, setResultCountries] = useState([]);
 
 
-/*    useEffect(() => {
+   useEffect(() => {
         console.log('effect run')
 
         // skip if country is not defined
         if (countries) {
             console.log('fetching countries ... ')
 
-            setCountries(...countriesArr);
-        }
-    }, [countries]);*/
-
-    /*    useEffect(() => {
-            console.log('effect run')
-
-            // skip if country is not defined
-            if (country) {
-                console.log('fetching countries ... ')
-                axios
+            axios
                     .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
                     .then(response => {
-                        setCountry(response.data)
+          setCountries(response.data)
                     })
-            }
-        }, [])*/
+        }
+    }, []);
 
 
         const handleSearchChange = (event) => {
@@ -110,9 +51,10 @@ const App = () => {
 
 
        const searchCountry = (str) => {
+
            setResultCountries(
-               countriesArr.filter(country =>
-                   country.name.common.toLowerCase().includes(str.toLowerCase())
+               countries.filter(country =>
+                   country.name.common.toLowerCase().includes(str.toLowerCase()) || country.name.official.toLowerCase().includes(str.toLowerCase())
                )
            );
        };
@@ -124,11 +66,17 @@ const App = () => {
                 Find countries: <input value={searchString} onChange={handleSearchChange}/>
             </div>
 
-            {resultCountries.map(country =>
-                <div key={country.name.common}>
-                    {country.name.common}
-                    <br/>
+            {resultCountries.length > 10 ? (
+                <div>
+                    Too many matches, specify another filter.
                 </div>
+            ) : (
+                resultCountries.map(country =>
+                    <div key={country.name.common}>
+                        {country.name.common}
+                        <br/>
+                    </div>
+                )
             )}
         </div>
     )
