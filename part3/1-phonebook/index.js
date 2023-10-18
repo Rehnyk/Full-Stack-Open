@@ -1,5 +1,17 @@
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
+
+
+morgan.token('postData', (req, res) => {
+    if (req.method === 'POST') {
+        return JSON.stringify(req.body);
+    } else {
+        return '';
+    }
+});
+
+app.use(morgan(':method :url :status :response-time ms :postData'));
 
 app.use(express.json());
 
@@ -59,7 +71,6 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body;
-    console.log(body)
 
     if (!body.name || !body.number) {
         return response.status(400).json({
@@ -80,8 +91,6 @@ app.post('/api/persons', (request, response) => {
     persons = persons.concat(person);
     response.json(person);
 });
-
-
 
 const PORT = 3001;
 app.listen(PORT, () => {
