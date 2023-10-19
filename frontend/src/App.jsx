@@ -5,8 +5,6 @@ import Footer from "./components/Footer.jsx";
 import noteService from './services/notes.js'
 
 
-
-
 const App = () => {
     const [notes, setNotes] = useState(null)
     const [newNote, setNewNote] = useState('')
