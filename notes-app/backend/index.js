@@ -1,5 +1,5 @@
-const express = require('express');
-const app = express();
+const express = require('express')
+const app = express()
 const cors = require('cors')
 
 const requestLogger = (request, response, next) => {
@@ -14,7 +14,6 @@ const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
 }
 
-
 app.use(cors())
 app.use(express.json())
 app.use(requestLogger)
@@ -23,12 +22,12 @@ app.use(express.static('dist'))
 let notes = [
     {
         id: 1,
-        content: "HTML is easy",
+        content: "HTML is easy123123123",
         important: true
     },
     {
         id: 2,
-        content: "Browser can execute only JavaScript",
+        content: "Browser can execute only JavaScript.......",
         important: false
     },
     {
