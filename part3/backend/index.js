@@ -32,6 +32,15 @@ app.use(cors());
 app.use(morgan(':method :url :status :response-time ms :postData'));
 app.use(express.static('dist'));
 
+
+app.get('/info', (request, response) => {
+    Person.count().then(count => {
+        response.send(
+            `<p>Phonebook has info for ${count} people</p>
+              <p>${new Date()}</p>`);
+    });
+});
+
 // Show all people
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(person => {
@@ -85,8 +94,8 @@ app.put('/api/persons/:id', (request, response, next) => {
     const body = request.body
 
     const person = {
-        content: body.content,
-        important: body.important,
+        name: body.name,
+        number: body.number
     }
 
     Person.findByIdAndUpdate(request.params.id, person, { new: true })
