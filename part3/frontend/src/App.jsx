@@ -75,7 +75,10 @@ const App = () => {
 
                 })
                 .catch(error => {
-                    setError(`Failed to add ${newName}.`)
+                  //  debugger
+                    console.log(error.response.data.error);
+                    setError(error.response.data.error);
+ //                   setError(`Person validation failed: name: Path \`name\` (\`${newName}\`) is shorter than the minimum allowed length (3).,`);
                     setTimeout(() => {setError(null)}, 5000);
                 });
         }

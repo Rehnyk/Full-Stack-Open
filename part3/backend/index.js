@@ -21,8 +21,13 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message);
 
     if (error.name === 'CastError') {
-        return response.status(400).send({ error: 'malformatted id' });
+        return response.status(400).send({ error: 'malformed id' });
     }
+
+    if (error.name === 'ValidationError') {
+        return response.status(403).send({ error: error.message });
+    }
+
 
     next(error);
 };
@@ -70,14 +75,8 @@ app.delete('/api/persons/:id', (request, response, next) => {
 });
 
 // Add a new person
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body;
-
-    if (!body.name || !body.number) {
-        return response.status(400).json({
-            error: 'Name or number is missing.'
-        });
-    }
 
     const person = new Person ({
         name: body.name,
@@ -87,6 +86,8 @@ app.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
         response.json(savedPerson)
     })
+
+        .catch(error => next(error))
 });
 
 // Change number of a person
@@ -102,7 +103,13 @@ app.put('/api/persons/:id', (request, response, next) => {
         .then(updatedPerson => {
             response.json(updatedPerson)
         })
-        .catch(error => next(error))
+        .catch(error => {
+            if (error.name === 'ValidationError') {
+                response.status(400).json({ error: error.message });
+            } else {
+                next(error);
+            }
+        });
 })
 
 app.use(unknownEndpoint);

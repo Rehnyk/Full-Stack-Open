@@ -29,7 +29,7 @@ const personSchema = new mongoose.Schema({
             validator: function (v) {
                 return /\d{2,3}-\d+/.test(v);
             },
-            required: true
+            required: true,
         }
     }
 });
@@ -41,5 +41,7 @@ personSchema.set('toJSON', {
         delete returnedObject.__v
     }
 })
+
+
 
 module.exports = mongoose.model('Person', personSchema);
