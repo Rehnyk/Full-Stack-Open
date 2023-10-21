@@ -1,11 +1,11 @@
-import {useState, useEffect} from 'react';
-import Filter from "./components/Filter.jsx";
-import SearchResult from "./components/SearchResult.jsx";
-import PersonForm from "./components/PersonForm.jsx";
-import Persons from "./components/Persons.jsx";
-import Notification from "./components/Notification.jsx";
-import Error from "./components/Error.jsx";
-import personService from './services/persons.js'
+import { useState, useEffect } from 'react';
+import Filter from './components/Filter.jsx';
+import SearchResult from './components/SearchResult.jsx';
+import PersonForm from './components/PersonForm.jsx';
+import Persons from './components/Persons.jsx';
+import Notification from './components/Notification.jsx';
+import Error from './components/Error.jsx';
+import personService from './services/persons.js';
 
 const App = () => {
     const [persons, setPersons] = useState([]);
@@ -21,9 +21,9 @@ const App = () => {
         personService
             .getAll()
             .then(initialPersons => {
-                setPersons(initialPersons)
-            })
-    }, [])
+                setPersons(initialPersons);
+            });
+    }, []);
 
 
     const handleNameChange = (event) => {
@@ -54,12 +54,13 @@ const App = () => {
                     .then(returnedPerson => {
                         setPersons(persons.map(person => (person.id !== existingPerson.id ? person : returnedPerson)));
 
-                        setNotification(`Number for ${existingPerson.name} has been changed.`)
-                        setTimeout(() => {setNotification(null)}, 5000)
+                        setNotification(`Number for ${ existingPerson.name } has been changed.`);
+                        setTimeout(() => {setNotification(null);}, 5000);
                     })
                     .catch(error => {
-                        setError(`Failed to update ${existingPerson.name}. Contact has already been deleted from the server.`)
-                        setTimeout(() => {setError(null)}, 5000);
+                        console.log(error.response.data.error);
+                        setError(error.response.data.error);
+                        setTimeout(() => {setError(null);}, 5000);
                     });
             }
         } else {
@@ -70,16 +71,14 @@ const App = () => {
                     setNewName('');
                     setNewNumber('');
 
-                    setNotification(`${newName} has been added in the phonebook`)
-                    setTimeout(() => {setNotification(null)}, 5000)
+                    setNotification(`${newName} has been added in the phonebook`);
+                    setTimeout(() => {setNotification(null);}, 5000);
 
                 })
                 .catch(error => {
-                  //  debugger
                     console.log(error.response.data.error);
                     setError(error.response.data.error);
- //                   setError(`Person validation failed: name: Path \`name\` (\`${newName}\`) is shorter than the minimum allowed length (3).,`);
-                    setTimeout(() => {setError(null)}, 5000);
+                    setTimeout(() => {setError(null);}, 5000);
                 });
         }
     };
@@ -102,13 +101,14 @@ const App = () => {
                 setPersons(persons.filter(person => person.id !== findPerson.id));
                 setSearches(searches.filter(person => person.id !== findPerson.id));
 
-                setNotification(` ${findPerson.name} has been deleted.`)
-                setTimeout(() => {setNotification(null)}, 5000)
+                setNotification(` ${findPerson.name} has been deleted.`);
+                setTimeout(() => {setNotification(null);}, 5000);
 
             })
             .catch(error => {
-                setError(`Failed to delete ${findPerson.name}. Contact has already been deleted from the server.`)
-                setTimeout(() => {setError(null)}, 5000);
+                console.log(error.response.data.error);
+                setError(error.response.data.error);
+                setTimeout(() => {setError(null);}, 5000);
             });
     };
 
@@ -126,7 +126,7 @@ const App = () => {
 
             <h2>Add New</h2>
             <PersonForm onClick={addPerson} name={newName} number={newNumber} handleNameChange={handleNameChange}
-                        handleNumberChange={handleNumberChange}/>
+                handleNumberChange={handleNumberChange}/>
 
             <h2>All Numbers</h2>
             <Persons persons={persons} onClick={(name) => deletePerson(name)}/>

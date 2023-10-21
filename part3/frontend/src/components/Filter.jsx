@@ -1,7 +1,7 @@
 
-const Filter = ({searchName, handleSearchChange}) =>
-        <div>
+const Filter = ({ searchName, handleSearchChange }) =>
+    <div>
             Search Name: <input value={searchName} onChange={handleSearchChange}/>
-        </div>
+    </div>;
 
 export default Filter;
