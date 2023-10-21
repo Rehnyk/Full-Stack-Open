@@ -5,7 +5,7 @@ const SearchResult = ({ searches, onClick }) => (
         ) : (
             searches.map(search => (
                 <div key={search.name}>
-                    {search.name} {search.number} <button onClick={() => onClick(search.name)} type="submit">delete</button>
+                    {search.name} {search.number} <button onClick={() => onClick(search.name)} type="submit">Delete</button>
                 </div>
             ))
         )}
