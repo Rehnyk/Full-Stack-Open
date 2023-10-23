@@ -1,5 +1,5 @@
 const logger = require('./logger');
-const morgan = require('morgan');
+
 
 const requestLogger = (request, response, next) => {
     logger.info('Method:', request.method);
@@ -8,13 +8,6 @@ const requestLogger = (request, response, next) => {
     logger.info('---');
     next();
 };
-morgan.token('postData', (req) => {
-    if (req.method === 'POST') {
-        return JSON.stringify(req.body);
-    } else {
-        return '';
-    }
-});
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' });
@@ -36,5 +29,4 @@ module.exports = {
     requestLogger,
     unknownEndpoint,
     errorHandler,
-    morgan
 };
