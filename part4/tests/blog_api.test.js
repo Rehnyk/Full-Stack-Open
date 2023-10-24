@@ -27,7 +27,7 @@ test('all blogs are returned', async () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
-test('unique identifier property is named "id"', async () => {
+test('unique identifier property is named "id" ', async () => {
     const response = await api.get('/api/blogs');
 
     expect(response.body[0].id).toBeDefined();
