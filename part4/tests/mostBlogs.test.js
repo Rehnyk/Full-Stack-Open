@@ -1,25 +1,23 @@
 const listHelper = require('../utils/list_helper.js');
 
-describe('favorite blog', () => {
-    test('of empty list is null', () => {
-        const result = listHelper.favoriteBlog(emptyList);
+describe('author with the most blogs', () => {
+    test('when list is empty is null', () => {
+        const result = listHelper.mostBlogs(emptyList);
         expect(result).toEqual(null);
     });
 
     test('when list has only one blog, returns that', () => {
-        const result = listHelper.favoriteBlog(listWithOneBlog);
+        const result = listHelper.mostBlogs(listWithOneBlog);
         expect(result).toEqual({
-            title: 'Go To Statement Considered Harmful',
             author: 'Edsger W. Dijkstra',
-            likes: 5,
+            blogs: 1
         });
     });
     test('of a bigger list returns correct one', () => {
-        const result = listHelper.favoriteBlog(blogs);
+        const result = listHelper.mostBlogs(blogs);
         expect(result).toEqual({
-            title: 'Canonical string reduction',
-            author: 'Edsger W. Dijkstra',
-            likes: 12,
+            author: 'Robert C. Martin',
+            blogs: 3
         });
     });
 });
