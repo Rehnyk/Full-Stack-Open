@@ -27,11 +27,32 @@ test('all blogs are returned', async () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
-test('unique identifier property "id" exists in blog posts', async () => {
+test('unique identifier property is named "id"', async () => {
     const response = await api.get('/api/blogs');
 
     expect(response.body[0].id).toBeDefined();
 });
+
+test('a valid blog can be added ', async () => {
+    const newBlog =  {
+        title: 'Coding',
+        author: 'Tom',
+        url: 'coding.com',
+        likes: 7
+    };
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+
+    expect(blogsAtEnd).toContainEqual(expect.objectContaining(newBlog));
+});
+
 
 
 afterAll(async () => {
