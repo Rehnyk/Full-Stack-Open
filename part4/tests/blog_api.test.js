@@ -11,7 +11,7 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs);
 });
 
-describe('when there are notes saved initially', () => {
+describe('when there are blogs saved initially', () => {
     test('blogs are returned as json', async () => {
         await api
             .get('/api/blogs')
@@ -50,7 +50,7 @@ describe ('checking id properties of a blog', () => {
     });
 });
 
-describe('adding new note', () => {
+describe('adding new blog', () => {
     test('a valid blog can be added ', async () => {
         const newBlog =  {
             title: 'Coding',
@@ -96,9 +96,46 @@ describe('adding new note', () => {
     });
 });
 
-describe('deleting a note', () => {});
+describe('deleting a blog', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
+        const blogsAtStart = await helper.blogsInDb();
+        const blogToDelete = blogsAtStart[0];
 
-describe('updating a note', () => {});
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204);
+
+        const blogsAtEnd = await helper.blogsInDb();
+
+        expect(blogsAtEnd).toHaveLength(
+            helper.initialBlogs.length - 1
+        );
+
+        expect(blogsAtEnd).not.toContainEqual(blogToDelete);
+    });
+});
+
+describe('updating a blog', () => {
+    test('succeeds with status code 200', async () => {
+        const blogsAtStart = await helper.blogsInDb();
+
+        const blogToChange = {
+            id: blogsAtStart[0].id,
+            title: 'Movies',
+            author: 'Michael',
+            url: 'movies.com',
+            likes: 6
+        };
+
+        const resultBlog = await api
+            .put(`/api/blogs/${blogToChange.id}`)
+            .send(blogToChange)
+            .expect(200)
+            .expect('Content-Type', /application\/json/);
+
+        expect(resultBlog.body).toEqual(blogToChange);
+    });
+});
 
 
 
