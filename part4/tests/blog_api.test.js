@@ -53,7 +53,7 @@ test('a valid blog can be added ', async () => {
     expect(blogsAtEnd).toContainEqual(expect.objectContaining(newBlog));
 });
 
-test('if likes property is missing, it defaults to 0', async () => {
+test('likes default to 0, if property is missing from request', async () => {
     const newBlog = {
         title: 'Sports',
         author: 'Jake',
@@ -63,11 +63,36 @@ test('if likes property is missing, it defaults to 0', async () => {
     const response = await api
         .post('/api/blogs')
         .send(newBlog)
-        .expect(201)
-        .expect('Content-Type', /application\/json/);
+        .expect(201);
 
     const savedBlog = response.body;
     expect(savedBlog.likes).toBe(0);
+});
+
+test('title is missing from request', async () => {
+    const newBlog = {
+        author: 'Jake',
+        url: 'sports.com',
+        likes: 8
+    };
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400);
+});
+
+test('url is missing from request', async () => {
+    const newBlog = {
+        title: 'Sports',
+        author: 'Jake',
+        likes: 8
+    };
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400);
 });
 
 afterAll(async () => {
