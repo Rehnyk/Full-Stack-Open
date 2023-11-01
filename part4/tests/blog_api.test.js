@@ -171,7 +171,7 @@ describe('when there is initially one user in db', () => {
         expect(usernames).toContain(newUser.username);
     });
 
-    test('if password is invalid, respond with 403 status code', async () => {
+    test('if password is invalid, respond with 401 status code', async () => {
         const newUser = {
             username: 'mluukkai',
             name: 'Matti Luukkainen',
@@ -181,7 +181,7 @@ describe('when there is initially one user in db', () => {
         await api
             .post('/api/users')
             .send(newUser)
-            .expect(403);
+            .expect(401);
     });
 
     test('if username is invalid, respond with 403 status code', async () => {
@@ -197,7 +197,7 @@ describe('when there is initially one user in db', () => {
             .expect(403);
     });
 
-    test('if username already exists, respond with 403 status code', async () => {
+    test('if username already exists, respond with 401 status code', async () => {
         const newUser = {
             username: 'mluukkai',
             name: 'Matti Luukkainen',
@@ -207,7 +207,7 @@ describe('when there is initially one user in db', () => {
         await api
             .post('/api/users')
             .send(newUser)
-            .expect(403);
+            .expect(401);
     });
 });
 

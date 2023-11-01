@@ -23,7 +23,7 @@ const errorHandler = (error, request, response, next) => {
     }
 
     if (error.message === 'InvalidPassword') {
-        return response.status(403).send({ error: 'Password has to be at least 3 characters' });
+        return response.status(401).send({ error: 'Password has to be at least 3 characters' });
     }
     next(error);
 };
