@@ -4,6 +4,8 @@ const helper = require('./test_helper.js');
 const app = require('../app.js');
 const api = supertest(app);
 const Blog = require('../models/blog.js');
+const bcrypt = require('bcrypt');
+const User = require('../models/user.js');
 
 
 beforeEach(async () => {
@@ -137,7 +139,77 @@ describe('updating a blog', () => {
     });
 });
 
+describe('when there is initially one user in db', () => {
+    beforeEach(async () => {
+        await User.deleteMany({});
 
+        const passwordHash = await bcrypt.hash('secret', 10);
+        const user = new User({ username: 'root', passwordHash });
+
+        await user.save();
+    });
+
+    test('creation succeeds with a fresh username', async () => {
+        const usersAtStart = await helper.usersInDb();
+
+        const newUser = {
+            username: 'mluukkai',
+            name: 'Matti Luukkainen',
+            password: 'salainen',
+        };
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(201)
+            .expect('Content-Type', /application\/json/);
+
+        const usersAtEnd = await helper.usersInDb();
+        expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
+
+        const usernames = usersAtEnd.map(u => u.username);
+        expect(usernames).toContain(newUser.username);
+    });
+
+    test('if password is invalid, respond with 403 status code', async () => {
+        const newUser = {
+            username: 'mluukkai',
+            name: 'Matti Luukkainen',
+            password: 's',
+        };
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(403);
+    });
+
+    test('if username is invalid, respond with 403 status code', async () => {
+        const newUser = {
+            username: 'm',
+            name: 'Matti Luukkainen',
+            password: 'something',
+        };
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(403);
+    });
+
+    test('if username already exists, respond with 403 status code', async () => {
+        const newUser = {
+            username: 'mluukkai',
+            name: 'Matti Luukkainen',
+            password: 's',
+        };
+
+        await api
+            .post('/api/users')
+            .send(newUser)
+            .expect(403);
+    });
+});
 
 
 afterAll(async () => {
