@@ -21,6 +21,10 @@ const errorHandler = (error, request, response, next) => {
     if (error.name === 'ValidationError') {
         return response.status(403).send({ error: error.message });
     }
+
+    if (error.message === 'InvalidPassword') {
+        return response.status(401).send({ error: 'Password has to be at least 3 characters' });
+    }
     next(error);
 };
 
