@@ -1,7 +1,6 @@
 const blogsRouter = require('express').Router();
-const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog.js');
-const User = require('../models/user.js');
+const middleware = require('../utils/middleware.js');
 
 // GET, show all blogs
 blogsRouter.get('/', async (request, response) => {
@@ -11,15 +10,9 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 // POST, add a new blog
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     const body = request.body;
-
-    const decodedToken = jwt.verify(request.token, process.env.SECRET);
-    if (!decodedToken.id) {
-        return response.status(401).json({ error: 'token invalid' });
-    }
-
-    const user = await User.findById(decodedToken.id);
+    const user = request.user;
 
     if (!body.title || !body.url) {
         return response.status(400).json({ error: 'Title and URL are required' });
@@ -30,7 +23,7 @@ blogsRouter.post('/', async (request, response) => {
         author: body.author,
         url: body.url,
         likes: body.likes || 0,
-        user: user.id
+        user: user._id
     });
 
     const savedBlog = await blog.save();
@@ -40,17 +33,11 @@ blogsRouter.post('/', async (request, response) => {
 });
 
 // DELETE, delete a blog
-blogsRouter.delete('/:id', async (request, response) => {
-
-    const decodedToken = jwt.verify(request.token, process.env.SECRET);
-    if (!decodedToken.id) {
-        return response.status(401).json({ error: 'token invalid' });
-    }
-
-    const userId = await User.findById(decodedToken.id);
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+    const user = request.user;
     const blog = await Blog.findById(request.params.id);
 
-    if (blog.user.toString() !== userId._id.toString()) {
+    if (blog.user.toString() !== user._id.toString()) {
         return response.status(401).json({ error: 'User is not owner of the blog.' });
     }
 
