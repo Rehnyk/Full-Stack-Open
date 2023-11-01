@@ -25,6 +25,15 @@ const errorHandler = (error, request, response, next) => {
     if (error.message === 'InvalidPassword') {
         return response.status(401).send({ error: 'Password has to be at least 3 characters' });
     }
+
+    if (error.name ===  'JsonWebTokenError') {
+        return response.status(401).json({ error: error.message });
+    }
+
+    if (error.name === 'TokenExpiredError') {
+        return response.status(401).json({ error: 'token expired' });
+    }
+
     next(error);
 };
 
