@@ -4,7 +4,8 @@ const User = require('../models/user.js');
 
 // GET, show all blogs
 blogsRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({});
+    const blogs = await Blog
+        .find({}).populate('user', { username: 1, name: 1 });
     response.json(blogs);
 });
 
@@ -16,16 +17,18 @@ blogsRouter.post('/', async (request, response) => {
         return response.status(400).json({ error: 'Title and URL are required' });
     }
 
-    console.log(body)
+    const user = await User.findById(body.user);
     const blog = new Blog({
         title: body.title,
         author: body.author,
         url: body.url,
         likes: body.likes || 0,
-        user: '653fdb7dbb77141861e55edc'
+        user: user.id
     });
 
     const savedBlog = await blog.save();
+    user.blogs = user.blogs.concat(savedBlog._id);
+    await user.save();
     response.status(201).json(savedBlog);
 });
 

@@ -3,14 +3,14 @@ const usersRouter = require('express').Router();
 const User = require('../models/user.js');
 
 usersRouter.get('/', async (request, response) => {
-    const users = await User.find({});
+    const users = await User
+        .find({}).populate('blogs', { url: 2, title: 2, author: 2 });
     response.json(users);
 });
 
 usersRouter.post('/', async (request, response) => {
     const { username, name, password } = request.body;
 
-    console.log(`${username}, ${name}, ${password}`);
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
