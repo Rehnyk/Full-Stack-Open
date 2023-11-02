@@ -14,7 +14,7 @@ const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' });
 };
 const errorHandler = (error, request, response, next) => {
-    console.error(error.message);
+    console.error(error);
 
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformed id' });
@@ -56,6 +56,7 @@ const tokenExtractor = (request, response, next) => {
 };
 
 const userExtractor = async (request, response, next) => {
+    console.log('Decoded Token:', request.decodedToken)
     request.user = await User.findById(request.decodedToken.id);
     next();
 };

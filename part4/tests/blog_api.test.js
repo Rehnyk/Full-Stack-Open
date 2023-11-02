@@ -7,7 +7,6 @@ const Blog = require('../models/blog.js');
 const bcrypt = require('bcrypt');
 const User = require('../models/user.js');
 
-
 beforeEach(async () => {
     await Blog.deleteMany({});
     await Blog.insertMany(helper.initialBlogs);
@@ -61,8 +60,24 @@ describe('adding new blog', () => {
             likes: 7
         };
 
+        // Create a new user
+        await api
+            .post('/api/users')
+            .send(helper.createUser)
+            .expect(201);
+
+        // Log in and obtain a token
+        const loginUser =  await api
+            .post('/api/login')
+            .send({ username: helper.createUser.username, password: helper.createUser.password })
+            .expect(200);
+
+        const token = loginUser._body.token;
+
+        // Create new blog
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/);
@@ -86,13 +101,30 @@ describe('adding new blog', () => {
             likes: 8
         };
 
+        // Create a new user
+        await api
+            .post('/api/users')
+            .send(helper.createUser)
+            .expect(201);
+
+        // Log in and obtain a token
+        const loginUser =  await api
+            .post('/api/login')
+            .send({ username: helper.createUser.username, password: helper.createUser.password })
+            .expect(200);
+
+        const token = loginUser._body.token;
+
+        // Try to create new blog
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(noTitle)
             .expect(400);
 
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(noUrl)
             .expect(400);
     });
@@ -103,8 +135,24 @@ describe('deleting a blog', () => {
         const blogsAtStart = await helper.blogsInDb();
         const blogToDelete = blogsAtStart[0];
 
+        // Create a new user
+        await api
+            .post('/api/users')
+            .send(helper.createUser)
+            .expect(201);
+
+        // Log in and obtain a token
+        const loginUser =  await api
+            .post('/api/login')
+            .send({ username: helper.createUser.username, password: helper.createUser.password })
+            .expect(200);
+
+        const token = loginUser._body.token;
+
+        // Delete a blog
         await api
             .delete(`/api/blogs/${blogToDelete.id}`)
+            .set('Authorization', `Bearer ${token}`)
             .expect(204);
 
         const blogsAtEnd = await helper.blogsInDb();

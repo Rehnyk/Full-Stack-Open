@@ -1,5 +1,6 @@
 const Blog = require ('../models/blog.js');
 const User = require('../models/user.js');
+const jwt = require('jsonwebtoken');
 
 const initialBlogs = [
     {
@@ -22,6 +23,12 @@ const initialBlogs = [
     }
 ];
 
+const createUser = {
+    username: `user${Math.floor(Math.random() * 1000)}`,
+    name: 'Random User',
+    password: 'admin'
+};
+
 
 const blogsInDb = async () => {
     const blogs = await Blog.find({});
@@ -33,7 +40,11 @@ const usersInDb = async () => {
     return users.map(u => u.toJSON());
 };
 
+const getToken = () =>
+    jwt.sign({ username: createUser.username, password: createUser.password }, process.env.SECRET);
+
+
 
 module.exports = {
-    initialBlogs, blogsInDb, usersInDb,
+    initialBlogs, createUser, blogsInDb, usersInDb, getToken
 };
