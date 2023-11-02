@@ -37,7 +37,6 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
     const user = request.user;
     const blog = await Blog.findById(request.params.id);
 
-    console.log(`DELETE USER:`, blog.user)
     if (blog.user.toString() !== user._id.toString()) {
         return response.status(401).json({ error: 'User is not owner of the blog.' });
     }

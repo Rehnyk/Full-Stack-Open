@@ -6,10 +6,12 @@ const api = supertest(app);
 const Blog = require('../models/blog.js');
 const bcrypt = require('bcrypt');
 const User = require('../models/user.js');
+const {blogsInDb} = require("./test_helper");
 
 beforeEach(async () => {
     await Blog.deleteMany({});
     await Blog.insertMany(helper.initialBlogs);
+    await User.deleteMany({});
 });
 
 describe('when there are blogs saved initially', () => {
@@ -40,9 +42,24 @@ describe ('checking id properties of a blog', () => {
             author: 'Jake',
             url: 'sports.com'
         };
+        // Create a new user
+        await api
+            .post('/api/users')
+            .send(helper.testUser)
+            .expect(201);
 
+        // Log in and obtain a token
+        const loginUser =  await api
+            .post('/api/login')
+            .send({ username: helper.testUser.username, password: helper.testUser.password })
+            .expect(200);
+
+        const token = loginUser._body.token;
+
+        // Create new blog
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201);
 
@@ -63,13 +80,13 @@ describe('adding new blog', () => {
         // Create a new user
         await api
             .post('/api/users')
-            .send(helper.createUser)
+            .send(helper.testUser)
             .expect(201);
 
         // Log in and obtain a token
         const loginUser =  await api
             .post('/api/login')
-            .send({ username: helper.createUser.username, password: helper.createUser.password })
+            .send({ username: helper.testUser.username, password: helper.testUser.password })
             .expect(200);
 
         const token = loginUser._body.token;
@@ -104,13 +121,13 @@ describe('adding new blog', () => {
         // Create a new user
         await api
             .post('/api/users')
-            .send(helper.createUser)
+            .send(helper.testUser)
             .expect(201);
 
         // Log in and obtain a token
         const loginUser =  await api
             .post('/api/login')
-            .send({ username: helper.createUser.username, password: helper.createUser.password })
+            .send({ username: helper.testUser.username, password: helper.testUser.password })
             .expect(200);
 
         const token = loginUser._body.token;
@@ -132,22 +149,36 @@ describe('adding new blog', () => {
 
 describe('deleting a blog', () => {
     test('succeeds with status code 204 if id is valid', async () => {
-        const blogsAtStart = await helper.blogsInDb();
-        const blogToDelete = blogsAtStart[0];
+        const newBlog =  {
+            title: 'Coding',
+            author: 'Tom',
+            url: 'coding.com',
+            likes: 7
+        };
 
         // Create a new user
         await api
             .post('/api/users')
-            .send(helper.createUser)
+            .send(helper.testUser)
             .expect(201);
 
         // Log in and obtain a token
         const loginUser =  await api
             .post('/api/login')
-            .send({ username: helper.createUser.username, password: helper.createUser.password })
+            .send({ username: helper.testUser.username, password: helper.testUser.password })
             .expect(200);
 
         const token = loginUser._body.token;
+
+        // Create new blog
+        await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
+            .send(newBlog)
+            .expect(201);
+
+        const blogsAtStart = await helper.blogsInDb();
+        const blogToDelete = blogsAtStart[blogsAtStart.length - 1];
 
         // Delete a blog
         await api
@@ -158,7 +189,7 @@ describe('deleting a blog', () => {
         const blogsAtEnd = await helper.blogsInDb();
 
         expect(blogsAtEnd).toHaveLength(
-            helper.initialBlogs.length - 1
+            helper.initialBlogs.length
         );
 
         expect(blogsAtEnd).not.toContainEqual(blogToDelete);
