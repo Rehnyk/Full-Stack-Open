@@ -14,6 +14,10 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     const body = request.body;
     const user = request.user;
 
+    if(!user) {
+        return response.status(401).json({ error: 'Unauthorized' });
+    }
+
     if (!body.title || !body.url) {
         return response.status(400).json({ error: 'Title and URL are required' });
     }

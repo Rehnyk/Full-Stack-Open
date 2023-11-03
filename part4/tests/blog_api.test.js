@@ -6,7 +6,6 @@ const api = supertest(app);
 const Blog = require('../models/blog.js');
 const bcrypt = require('bcrypt');
 const User = require('../models/user.js');
-const {blogsInDb} = require("./test_helper");
 
 beforeEach(async () => {
     await Blog.deleteMany({});
@@ -144,6 +143,51 @@ describe('adding new blog', () => {
             .set('Authorization', `Bearer ${token}`)
             .send(noUrl)
             .expect(400);
+    });
+
+    test('fail with 401, if token is not provided ', async () => {
+        const newBlog =  {
+            title: 'Coding',
+            author: 'Tom',
+            url: 'coding.com',
+            likes: 7
+        };
+
+        // Create new blog
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(401);
+    });
+
+    test('fail with 401 if token is not valid ', async () => {
+        const newBlog =  {
+            title: 'Coding',
+            author: 'Tom',
+            url: 'coding.com',
+            likes: 7
+        };
+
+        // Create a new user
+        await api
+            .post('/api/users')
+            .send(helper.testUser)
+            .expect(201);
+
+        // Log in and obtain a token
+        const loginUser =  await api
+            .post('/api/login')
+            .send({ username: helper.testUser.username, password: helper.testUser.password })
+            .expect(200);
+
+        const token = loginUser._body.token;
+
+        // Create new blog
+        await api
+            .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}123`)
+            .send(newBlog)
+            .expect(401);
     });
 });
 
