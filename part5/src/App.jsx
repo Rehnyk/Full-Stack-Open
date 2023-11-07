@@ -2,12 +2,16 @@ import {useState, useEffect} from 'react';
 import Blog from './components/Blog.jsx';
 import blogService from './services/blogs.js';
 import loginService from './services/login.js'
+import Notification from './components/Notification.jsx';
+import Error from './components/Error.jsx';
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState(null);
+    const [notification, setNotification] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -37,7 +41,8 @@ const App = () => {
             setUsername('')
             setPassword('')
         } catch (exception) {
-            console.log(`login failed`)
+            setError('Username or password is wrong')
+            setTimeout(() => {setError(null)}, 5000)
         }
     }
 
@@ -51,17 +56,24 @@ const App = () => {
         const form = event.target;
         const formData = new FormData(form);
 
-        const blogObject = {
-            title: formData.get('title'),
-            author: formData.get('author'),
-            url: formData.get('url'),
-        };
+        const title = formData.get('title');
+        const author = formData.get('author');
+        const url = formData.get('url');
 
+        if (!title || !author || !url) {
+            setError('All fields are required')
+            setTimeout(() => {setError(null)}, 5000)
+            return;
+        }
 
         blogService
-            .create(blogObject)
+            .create({ title, author, url })
             .then(returnedBlog => {
-                setBlogs(blogs.concat(returnedBlog))
+                form.reset();
+                setBlogs(blogs.concat(returnedBlog));
+
+                setNotification(`A new blog ${title} by ${author} has been added.`);
+                setTimeout(() => {setNotification(null);}, 5000);
             })
     }
 
@@ -101,7 +113,8 @@ const App = () => {
 
     return (
         <div>
-
+            <Error message={error} />
+            <Notification message={notification} />
             {user === null && loginForm()}
             {user !== null && (
                 <div>
