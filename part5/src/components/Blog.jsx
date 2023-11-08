@@ -1,19 +1,15 @@
 import { useState } from 'react';
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog, user, addLike }) => {
     const [showDetails, setShowDetails] = useState(false);
 
     const toggleDetails = () => {
         setShowDetails(!showDetails);
     };
 
-     let userName = user.name;
+ let userName = (blog.user && blog.user.name) ? blog.user.name : user.name;
 
-        if (!blog.user) {
-            userName =  '';
-        } else if (blog.user.name) {
-             userName = blog.user.name;
-        }
+
 
 
     return (
@@ -23,7 +19,7 @@ const Blog = ({ blog, user }) => {
                     <div>
                         {blog.title} by {blog.author} <button onClick={toggleDetails}>Hide</button> <br/>
                         {blog.url} <br/>
-                        Likes: {blog.likes} <button>Like</button> <br/>
+                        Likes: {blog.likes} <button onClick={() => addLike(blog)}>Like</button> <br/>
                         {userName}
                     </div>
                 ) : (

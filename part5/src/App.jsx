@@ -76,6 +76,22 @@ const App = () => {
             })
     }
 
+    const addLike = (blog) => {
+        console.log(`BLOG USER TOP:`, blog.user)
+        const blogIndex = blogs.findIndex((currentBlog) => currentBlog.id === blog.id);
+
+        const updatedBlog = { ...blog };
+        updatedBlog.likes += 1;
+
+        blogService
+            .update(updatedBlog)
+            .then(returnedBlog => {
+                const updatedBlogs = [...blogs];
+                updatedBlogs[blogIndex] = returnedBlog;
+                setBlogs(updatedBlogs);
+                console.log(`BLOG USER END:`, blog.user)
+            })
+    }
 
     const loginForm = () => (
         <LoginForm
@@ -106,7 +122,7 @@ const App = () => {
                     {blogForm()}
                     <br/>
                     {blogs.map((blog) => (
-                        <Blog key={blog.id} blog={blog} user={user}/>
+                        <Blog key={blog.id} blog={blog} user={user} addLike={addLike} />
                     ))}
                 </div>
             )}
