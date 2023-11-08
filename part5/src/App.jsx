@@ -16,7 +16,6 @@ const App = () => {
     const [notification, setNotification] = useState(null);
     const [error, setError] = useState(null);
     const blogFormRef = useRef();
-    const blogViewRef = useRef();
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -107,7 +106,7 @@ const App = () => {
                     {blogForm()}
                     <br/>
                     {blogs.map((blog) => (
-                        <Blog key={blog.id} blog={blog} />
+                        <Blog key={blog.id} blog={blog} user={user}/>
                     ))}
                 </div>
             )}
