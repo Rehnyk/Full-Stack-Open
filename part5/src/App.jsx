@@ -1,9 +1,12 @@
-import {useState, useEffect} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog.jsx';
 import blogService from './services/blogs.js';
 import loginService from './services/login.js'
 import Notification from './components/Notification.jsx';
 import Error from './components/Error.jsx';
+import LoginForm from './components/LoginForm.jsx';
+import BlogForm from "./components/BlogForm.jsx";
+import Togglable from './components/Togglable.jsx';
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
@@ -12,6 +15,7 @@ const App = () => {
     const [user, setUser] = useState(null);
     const [notification, setNotification] = useState(null);
     const [error, setError] = useState(null);
+    const blogFormRef = useRef()
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -51,64 +55,41 @@ const App = () => {
         setUser(null);
     }
 
-    const addBlog = (event) => {
-        event.preventDefault()
-        const form = event.target;
-        const formData = new FormData(form);
+    const addBlog = (newBlog) => {
 
-        const title = formData.get('title');
-        const author = formData.get('author');
-        const url = formData.get('url');
-
-        if (!title || !author || !url) {
-            setError('All fields are required')
-            setTimeout(() => {setError(null)}, 5000)
+        if (!newBlog.title || !newBlog.author || !newBlog.url) {
+            setError('All fields are required');
+            setTimeout(() => {
+                setError(null);
+            }, 5000);
             return;
         }
+        blogFormRef.current.toggleVisibility()
 
         blogService
-            .create({ title, author, url })
+            .create(newBlog)
             .then(returnedBlog => {
-                form.reset();
                 setBlogs(blogs.concat(returnedBlog));
 
-                setNotification(`A new blog ${title} by ${author} has been added.`);
+                setNotification(`A new blog ${returnedBlog.title} by ${returnedBlog.author} has been added.`);
                 setTimeout(() => {setNotification(null);}, 5000);
             })
     }
 
 
     const loginForm = () => (
-        <form onSubmit={handleLogin}>
-        <h2>Login</h2>
-        <div>
-            username
-            <input
-                type="text"
-                value={username}
-                name="Username"
-                onChange={({target}) => setUsername(target.value)}
-            />
-        </div>
-        <div>
-            password
-            <input
-                type="password"
-                value={password}
-                name="Password"
-                onChange={({target}) => setPassword(target.value)}
-            />
-        </div>
-        <button type="submit">Login</button>
-    </form>
+        <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+        />
 )
     const blogForm = () => (
-        <form onSubmit={addBlog}>
-            Title <input type="text" name="title"/> <br/>
-            Author <input type="text" name="author"/> <br/>
-            URL <input type="text" name="url"/> <br/>
-            <button type="submit">Add</button>
-        </form>
+        <Togglable buttonLabel='New Blog' ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+        </Togglable>
     )
 
     return (
@@ -122,7 +103,7 @@ const App = () => {
                     <div>{user.name} logged in
                         <button onClick={handleLogout}>Log out</button></div>
                     <br/>
-                    <h2>Add new</h2>
+
                     {blogForm()}
                     <br/>
                     {blogs.map(blog => (
