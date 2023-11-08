@@ -18,3 +18,12 @@
     margin-bottom: 10px;
 }
 
+.blog-container {
+    border: 2px solid black;
+    margin: 5px;
+    padding: 5px;
+}
+
+button {
+    margin-left: 10px;
+}

@@ -15,7 +15,8 @@ const App = () => {
     const [user, setUser] = useState(null);
     const [notification, setNotification] = useState(null);
     const [error, setError] = useState(null);
-    const blogFormRef = useRef()
+    const blogFormRef = useRef();
+    const blogViewRef = useRef();
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -87,8 +88,8 @@ const App = () => {
         />
 )
     const blogForm = () => (
-        <Togglable buttonLabel='New Blog' ref={blogFormRef}>
-            <BlogForm createBlog={addBlog} />
+        <Togglable viewButton='New Blog' hideButton='Cancel'  ref={blogFormRef}>
+            <BlogForm createBlog={ addBlog } />
         </Togglable>
     )
 
@@ -103,11 +104,10 @@ const App = () => {
                     <div>{user.name} logged in
                         <button onClick={handleLogout}>Log out</button></div>
                     <br/>
-
                     {blogForm()}
                     <br/>
-                    {blogs.map(blog => (
-                        <Blog key={blog.id} blog={blog}/>
+                    {blogs.map((blog) => (
+                        <Blog key={blog.id} blog={blog} />
                     ))}
                 </div>
             )}
