@@ -1,6 +1,7 @@
-import {useState} from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const Blog = ({blog, addLike, loggedUser, deleteBlog}) => {
+const Blog = ({ blog, addLike, loggedUser, deleteBlog }) => {
     const [showDetails, setShowDetails] = useState(false);
 
     const toggleDetails = () => {
@@ -36,4 +37,11 @@ const Blog = ({blog, addLike, loggedUser, deleteBlog}) => {
     );
 };
 
-export default Blog
+Blog.propTypes = {
+    blog: PropTypes.object.isRequired,
+    loggedUser: PropTypes.object.isRequired,
+    addLike: PropTypes.func.isRequired,
+    deleteBlog: PropTypes.func.isRequired
+
+};
+export default Blog;

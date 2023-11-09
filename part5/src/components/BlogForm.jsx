@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 
 const BlogForm = ({ createBlog }) => {
 
@@ -13,7 +14,7 @@ const BlogForm = ({ createBlog }) => {
             url: formData.get('url'),
         };
 
-            createBlog(newBlog);
+        createBlog(newBlog);
 
         form.reset();
     };
@@ -31,4 +32,7 @@ const BlogForm = ({ createBlog }) => {
     );
 };
 
+BlogForm.propTypes = {
+    createBlog: PropTypes.func.isRequired
+};
 export default BlogForm;

@@ -1,3 +1,5 @@
+
+
 const Error = ({ message }) => {
     if (message === null) {
         return null;
@@ -9,5 +11,6 @@ const Error = ({ message }) => {
         </div>
     );
 };
+
 
 export default Error;
