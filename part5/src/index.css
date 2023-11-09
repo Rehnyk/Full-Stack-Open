@@ -1,4 +1,6 @@
 .notification {
+    position: fixed;
+    width: 95%;
     color: green;
     background: lightgrey;
     font-size: 20px;
@@ -9,6 +11,8 @@
 }
 
 .error {
+    position: fixed;
+    width: 95%;
     color: red;
     background: lightgrey;
     font-size: 20px;
@@ -25,5 +29,9 @@
 }
 
 button {
-    margin-left: 10px;
+    margin-left: 5px;
+}
+
+.delete-btn {
+    margin-left: 0px;
 }

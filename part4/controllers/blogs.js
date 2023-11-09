@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router();
 const Blog = require('../models/blog.js');
 const middleware = require('../utils/middleware.js');
 
+
 // GET, show all blogs
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog
@@ -14,7 +15,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
     const body = request.body;
     const user = request.user;
 
-    if(!user) {
+    if (!user) {
         return response.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -30,11 +31,13 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
         user: user._id
     });
 
-    const savedBlog = await blog.save();
+    let savedBlog = await blog.save();
     user.blogs = user.blogs.concat(savedBlog._id);
     await user.save();
+    savedBlog = await Blog.findById(savedBlog._id).populate('user', { username: 1, name: 1 });
     response.status(201).json(savedBlog);
-});
+}
+);
 
 // DELETE, delete a blog
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
@@ -50,7 +53,7 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) =
 });
 
 // PUT, update a blog
-blogsRouter.put('/:id', (request, response, next) => {
+blogsRouter.put('/:id', async (request, response, next) => {
     const body = request.body;
 
     const blog = {
@@ -61,11 +64,14 @@ blogsRouter.put('/:id', (request, response, next) => {
         likes: body.likes
     };
 
-    Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-        .then(updatedBlog => {
-            response.json(updatedBlog);
-        })
-        .catch(error => next(error));
-});
+    try {
+        let updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true });
+        updatedBlog = await Blog.findById(updatedBlog._id).populate('user', { username: 1, name: 1 });
+        response.json(updatedBlog);
+    } catch (error) {
+        next(error);
+    }
+}
+);
 
 module.exports = blogsRouter;

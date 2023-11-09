@@ -1,30 +1,33 @@
-import { useState } from 'react';
+import {useState} from 'react';
 
-const Blog = ({ blog, user, addLike }) => {
+const Blog = ({blog, addLike, loggedUser, deleteBlog}) => {
     const [showDetails, setShowDetails] = useState(false);
 
     const toggleDetails = () => {
         setShowDetails(!showDetails);
     };
-
- let userName = (blog.user && blog.user.name) ? blog.user.name : user.name;
-
-
-
+    const canDelete = loggedUser && blog.user.username === loggedUser.username;
 
     return (
         <div className="blog-container">
             <div>
                 {showDetails ? (
                     <div>
-                        {blog.title} by {blog.author} <button onClick={toggleDetails}>Hide</button> <br/>
+                        {blog.title} by {blog.author}
+                        <button onClick={toggleDetails}>Hide</button>
+                        <br/>
                         {blog.url} <br/>
-                        Likes: {blog.likes} <button onClick={() => addLike(blog)}>Like</button> <br/>
-                        {userName}
+                        Likes: {blog.likes}
+                        <button onClick={() => addLike(blog)}>Like</button>
+                        <br/>
+                        {blog.user.name}
+                        <br/>
+                        {canDelete && <button onClick={() => deleteBlog(blog)} className="delete-btn">Delete</button>}
                     </div>
                 ) : (
                     <div>
-                        {blog.title} by {blog.author} <button onClick={toggleDetails}>View</button>
+                        {blog.title} by {blog.author}
+                        <button onClick={toggleDetails}>View</button>
                     </div>
                 )}
 
