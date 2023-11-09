@@ -18,9 +18,10 @@ const App = () => {
     const blogFormRef = useRef();
 
     useEffect(() => {
-        blogService.getAll().then(blogs =>
-            setBlogs(blogs)
-        )
+        blogService.getAll().then(blogs => {
+            const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+            setBlogs(sortedBlogs);
+        });
     }, []);
 
     useEffect(() => {
@@ -87,8 +88,8 @@ const App = () => {
                 const updatedBlogs = blogs.map(currentBlog =>
                     currentBlog.id === returnedBlog.id ? returnedBlog : currentBlog
                 );
-
-                setBlogs(updatedBlogs);
+                const sortedBlogs = [...updatedBlogs].sort((a, b) => b.likes - a.likes);
+                setBlogs(sortedBlogs);
             })
     }
 
@@ -115,6 +116,7 @@ const App = () => {
             <BlogForm createBlog={addBlog}/>
         </Togglable>
     )
+
 
     return (
         <div>
