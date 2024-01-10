@@ -26,7 +26,7 @@ const Blog = ({ blog, addLike, loggedUser, deleteBlog }) => {
                         {canDelete && <button onClick={() => deleteBlog(blog)} className="delete-btn">Delete</button>}
                     </div>
                 ) : (
-                    <div>
+                    <div className="default-blog">
                         {blog.title} by {blog.author}
                         <button onClick={toggleDetails}>View</button>
                     </div>
