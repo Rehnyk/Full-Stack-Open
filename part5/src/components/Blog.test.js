@@ -20,7 +20,7 @@ describe('Blog', () => {
 
     const addLikeMock = jest.fn();
     const deleteBlogMock = jest.fn();
-    const user = userEvent.setup()
+    const user = userEvent.setup();
 
 
     const loggedUser = {
@@ -53,5 +53,17 @@ describe('Blog', () => {
         expect(container).toHaveTextContent(`Likes: ${blog.likes}`);
 
     });
+
+    test('calls addLike handler twice when like button is clicked twice', async () => {
+        const viewButton = screen.getByText('View');
+        await user.click(viewButton);
+
+        const likeButton = screen.getByText('Like');
+        await user.click(likeButton);
+        await user.click(likeButton);
+
+        expect(addLikeMock).toHaveBeenCalledTimes(2);
+    });
+
 
 });
