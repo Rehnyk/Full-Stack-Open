@@ -4,7 +4,9 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Blog from './Blog.jsx';
 
-describe('<Blog />', () => {
+describe('Blog', () => {
+    let container;
+
     const blog = {
         title: 'Test Blog',
         author: 'Test Author',
@@ -18,18 +20,38 @@ describe('<Blog />', () => {
 
     const addLikeMock = jest.fn();
     const deleteBlogMock = jest.fn();
+    const user = userEvent.setup()
+
 
     const loggedUser = {
         username: 'testuser',
         name: 'Test User',
     };
 
-    test('renders title and author by default, not url and likes', () => {
-        const component = render(<Blog blog={blog} addLike={addLikeMock} loggedUser={loggedUser} deleteBlog={deleteBlogMock} />);
+    beforeEach(() => {
+        container = render(
+            <Blog
+                blog={blog}
+                addLike={addLikeMock}
+                loggedUser={loggedUser}
+                deleteBlog={deleteBlogMock}
+            />).container;
+    });
 
-        expect(component.container).toHaveTextContent(`${blog.title} by ${blog.author}`);
-        expect(component.container).not.toHaveTextContent(blog.url);
-        expect(component.container).not.toHaveTextContent(`Likes: ${blog.likes}`);
+
+    test('renders title and author by default, not url and likes', () => {
+        expect(container).toHaveTextContent(`${blog.title} by ${blog.author}`);
+        expect(container).not.toHaveTextContent(blog.url);
+        expect(container).not.toHaveTextContent(`Likes: ${blog.likes}`);
+    });
+
+    test('shows url and likes after Vies button is clicked', async () => {
+        const viewButton = screen.getByText('View');
+        await user.click(viewButton);
+
+        expect(container).toHaveTextContent(blog.url);
+        expect(container).toHaveTextContent(`Likes: ${blog.likes}`);
+
     });
 
 });
