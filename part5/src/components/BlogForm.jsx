@@ -23,9 +23,9 @@ const BlogForm = ({ createBlog }) => {
         <div>
             <h2>Add new</h2>
             <form onSubmit={addBlog}>
-                Title <input type="text" name="title" /> <br />
-                Author <input type="text" name="author" /> <br />
-                URL <input type="text" name="url" /> <br />
+                Title <input type="text" name="title" placeholder='title'/> <br />
+                Author <input type="text" name="author"  placeholder='author'/> <br />
+                URL <input type="text" name="url"  placeholder='url'/> <br />
                 <button type="submit">Add</button>
             </form>
         </div>

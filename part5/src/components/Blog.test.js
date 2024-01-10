@@ -64,6 +64,4 @@ describe('Blog', () => {
 
         expect(addLikeMock).toHaveBeenCalledTimes(2);
     });
-
-
 });
