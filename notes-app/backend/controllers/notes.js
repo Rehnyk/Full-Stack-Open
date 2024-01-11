@@ -2,17 +2,6 @@ const notesRouter = require('express').Router()
 const Note = require('../models/note.js')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
-notesRouter.get('/', async (request, response) => {
-    const notes = await Note.find({})
-    response.json(notes)
-})
-
-notesRouter.get('/', async (request, response) => {
-    const notes = await Note
-        .find({}).populate('user', { username: 1, name: 1 })
-
-    response.json(notes)
-})
 
 const getTokenFrom = request => {
     const authorization = request.get('authorization')
@@ -21,6 +10,12 @@ const getTokenFrom = request => {
     }
     return null
 }
+notesRouter.get('/', async (request, response) => {
+    const notes = await Note
+        .find({}).populate('user', { username: 1, name: 1 })
+
+    response.json(notes)
+})
 
 notesRouter.post('/', async (request, response) => {
     const body = request.body

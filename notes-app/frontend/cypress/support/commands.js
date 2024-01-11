@@ -30,7 +30,7 @@ Cypress.Commands.add('login', ({ username, password }) => {
     username, password
   }).then(({ body }) => {
     localStorage.setItem('loggedNoteappUser', JSON.stringify(body))
-    cy.visit('')
+    cy.visit('http://localhost:5173')
   })
 })
 
@@ -43,5 +43,5 @@ Cypress.Commands.add('createNote', ({ content, important }) => {
       'Authorization': `Bearer ${JSON.parse(localStorage.getItem('loggedNoteappUser')).token}`
     }
   })
-  cy.visit('')
+  cy.visit('http://localhost:5173')
 })
