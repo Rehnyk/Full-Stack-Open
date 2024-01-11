@@ -70,7 +70,7 @@ describe('Blog app', function() {
                 cy.createBlog({ title: 'Cypress Blog 333', author: 'Cypress Team', url: 'cypress-blog3.com' });
             });
 
-            it.only('a new blog is added to the list of all blogs', function() {
+            it('a new blog is added to the list of all blogs', function() {
                 cy.contains('New Blog').click();
                 cy.get('#blog-title-field').type('New test blog');
                 cy.get('#blog-author-field').type('Test User');
@@ -81,6 +81,27 @@ describe('Blog app', function() {
                 });
 
                 cy.contains('New test blog by Test User');
+            });
+
+            it.only('user can like a blog', function() {
+                cy.contains('View').click();
+                cy.contains('Like').click();
+                cy.contains('Likes: 1');
+
+                cy.contains('Like').click();
+                cy.contains('Likes: 2');
+            });
+
+            it('owner of the blog can delete it', function() {
+
+            });
+
+            it('only the owner of blog can see delete button', function() {
+
+            });
+
+            it('blogs are ordered according to likes', function() {
+
             });
         });
     });
