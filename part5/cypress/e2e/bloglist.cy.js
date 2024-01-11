@@ -1,6 +1,6 @@
 describe('Blog app', function() {
     beforeEach(function() {
-        cy.request('POST', 'http://localhost:3003/api/testing/reset');
+        cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`);
 
         const user = {
             name: 'Henry Jones',
@@ -9,7 +9,7 @@ describe('Blog app', function() {
         };
 
         cy.request('POST', `${Cypress.env('BACKEND')}/users`, user);
-        cy.visit('http://localhost:5173');
+        cy.visit('');
     });
 
     it('Login form is shown', function() {
@@ -46,11 +46,7 @@ describe('Blog app', function() {
 
     describe('When logged in', function() {
         beforeEach(function() {
-
-            cy.get('#username').type('henryj');
-            cy.get('#password').type('passHJ');
-            cy.get('#login-button').click();
-            //   cy.login({ username: 'henryj', password: 'passHJ' });
+            cy.login({ username: 'henryj', password: 'passHJ' });
         });
 
         it('a blog can be created', function() {
@@ -69,30 +65,9 @@ describe('Blog app', function() {
 
         describe('and several blogs exist', function () {
             beforeEach(function () {
-                cy.contains('New Blog').click();
-                cy.get('#blog-title-field').type('Cypress Blog 111');
-                cy.get('#blog-author-field').type('Cypress Team');
-                cy.get('#blog-url-field').type('cypress-blog1.com');
-                cy.get('form').within(() => {
-                    cy.contains('Add').click();
-                });
-
-                cy.contains('New Blog').click();
-                cy.get('#blog-title-field').type('Cypress Blog 222');
-                cy.get('#blog-author-field').type('Cypress Team');
-                cy.get('#blog-url-field').type('cypress-blog2.com');
-                cy.get('form').within(() => {
-                    cy.contains('Add').click();
-                });
-
-                cy.contains('New Blog').click();
-                cy.get('#blog-title-field').type('Cypress Blog 333');
-                cy.get('#blog-author-field').type('Cypress Team');
-                cy.get('#blog-url-field').type('cypress-blog3.com');
-                cy.get('form').within(() => {
-                    cy.contains('Add').click();
-                });
-
+                cy.createBlog({ title: 'Cypress Blog 111', author: 'Cypress Team', url: 'cypress-blog1.com' });
+                cy.createBlog({ title: 'Cypress Blog 222', author: 'Cypress Team', url: 'cypress-blog2.com' });
+                cy.createBlog({ title: 'Cypress Blog 333', author: 'Cypress Team', url: 'cypress-blog3.com' });
             });
 
             it.only('a new blog is added to the list of all blogs', function() {
