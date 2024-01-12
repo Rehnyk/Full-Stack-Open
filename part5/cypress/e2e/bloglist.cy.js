@@ -110,7 +110,7 @@ describe('Blog app', function() {
                 cy.get('html').should('not.contain', 'Cypress Blog 222');
             });
 
-            it.only('only the owner of blog can see delete button', function() {
+            it('only the owner of blog can see delete button', function() {
                 cy.contains('Log out').click();
                 cy.contains('Login');
 
@@ -126,8 +126,26 @@ describe('Blog app', function() {
                 cy.get('@theBlog').should('not.contain', 'Delete');
             });
 
-            it('blogs are ordered according to likes', function() {
+            it.only('blogs are ordered according to likes', function() {
+                cy.contains('Cypress Blog 111').parent().find('div').as('blog1');
+                cy.contains('Cypress Blog 222').parent().find('div').as('blog2');
+                cy.contains('Cypress Blog 333').parent().find('div').as('blog3');
 
+                cy.get('@blog3').contains('View').click();
+                cy.get('@blog3').contains('Like').click();
+                cy.get('@blog3').contains('Likes: 1');
+
+
+                cy.get('@blog2').contains('View').click();
+                cy.get('@blog2').contains('Like').click();
+                cy.get('@blog2').contains('Likes: 1');
+
+                cy.get('@blog3').contains('Like').click();
+                cy.get('@blog3').contains('Likes: 2');
+
+                cy.get('.blog-container').eq(0).should('contain', 'Cypress Blog 333');
+                cy.get('.blog-container').eq(1).should('contain', 'Cypress Blog 222');
+                cy.get('.blog-container').eq(2).should('contain', 'Cypress Blog 111');
             });
         });
     });
