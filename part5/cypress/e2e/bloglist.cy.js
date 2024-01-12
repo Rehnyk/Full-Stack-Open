@@ -2,13 +2,20 @@ describe('Blog app', function() {
     beforeEach(function() {
         cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`);
 
-        const user = {
+        const user1 = {
             name: 'Henry Jones',
             username: 'henryj',
             password: 'passHJ'
         };
 
-        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user);
+        const user2 = {
+            name: 'Jason Black',
+            username: 'jasonb',
+            password: 'passJB'
+        };
+
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user1);
+        cy.request('POST', `${Cypress.env('BACKEND')}/users`, user2);
         cy.visit('');
     });
 
@@ -83,7 +90,7 @@ describe('Blog app', function() {
                 cy.contains('New test blog by Test User');
             });
 
-            it.only('user can like a blog', function() {
+            it('user can like a blog', function() {
                 cy.contains('View').click();
                 cy.contains('Like').click();
                 cy.contains('Likes: 1');
@@ -93,11 +100,30 @@ describe('Blog app', function() {
             });
 
             it('owner of the blog can delete it', function() {
+                cy.contains('Henry Jones logged in');
 
+                cy.contains('Cypress Blog 222').parent().find('div').as('theBlog');
+                cy.get('@theBlog').contains('View').click();
+                cy.get('@theBlog').contains('Henry Jones');
+                cy.get('@theBlog').contains('Delete').click();
+
+                cy.get('html').should('not.contain', 'Cypress Blog 222');
             });
 
-            it('only the owner of blog can see delete button', function() {
+            it.only('only the owner of blog can see delete button', function() {
+                cy.contains('Log out').click();
+                cy.contains('Login');
 
+                cy.get('#username').type('jasonb');
+                cy.get('#password').type('passJB');
+                cy.get('#login-button').click();
+
+                cy.contains('Jason Black logged in');
+
+                cy.contains('Cypress Blog 222').parent().find('div').as('theBlog');
+                cy.get('@theBlog').contains('View').click();
+                cy.get('@theBlog').contains('Henry Jones');
+                cy.get('@theBlog').should('not.contain', 'Delete');
             });
 
             it('blogs are ordered according to likes', function() {
