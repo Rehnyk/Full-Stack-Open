@@ -1,20 +1,21 @@
-//import notificationReducer, { setNotification } from '../reducers/notificationReducer.js'
-import { useSelector } from 'react-redux'
+import {useSelector} from 'react-redux'
+
 const Notification = () => {
- // const dispatch = useDispatch()
-  const notification = useSelector(state => state)
+    let notification = useSelector(notification => notification.notification);
 
+    const style = {
+        border: 'solid',
+        padding: 10,
+        borderWidth: 1,
+        marginBottom: 10,
+        display: notification ? '' : 'none'
+    }
 
-  const style = {
-    border: 'solid',
-    padding: 10,
-    borderWidth: 1
-  }
-  return (
-    <div style={style}>
-      {notification}
-    </div>
-  )
+    return (
+        <div style={style}>
+            You voted for '{notification}'.
+        </div>
+    )
 }
 
 export default Notification
